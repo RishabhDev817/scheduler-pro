@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Privacy Policy - SchedulerPro">
+  <div class="page-container">
+    <span class="badge">Legal Regulations</span>
+    <h1>Privacy Policy.</h1>
+    <p class="subtitle">How SchedulerPro handles student, professor, and administrative database information securely.</p>
+
+    <div class="policy-document">
+      <section class="policy-section">
+        <h2>1. Information We Collect</h2>
+        <p>SchedulerPro collects academic scheduling information including professor names, university emails, department listings, room counts, subject descriptions, and student batch sizes. This data is exclusively used to perform constraint programming schedule optimization.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>2. Data Processing and Storage</h2>
+        <p>All database records are securely stored on a PostgreSQL database hosted via Supabase. Processing is executed server-side via Google OR-Tools. We do not sell, license, or share user scheduling details with third parties.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>3. Email Notifications</h2>
+        <p>Faculty email addresses are retrieved to dispatch weekly schedule notifications using SMTP mail servers. You can review and opt-out of notification services by contacting the Academic Registrar.</p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 800px;
+    margin: 40px auto;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-teal);
+    background-color: rgba(13, 148, 136, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .policy-document {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .policy-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .policy-section p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+  }
+</style>

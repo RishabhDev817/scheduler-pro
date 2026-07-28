@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About Us - SchedulerPro">
+  <div class="page-container">
+    <span class="badge">Platform Information</span>
+    <h1>About SchedulerPro.</h1>
+    <p class="subtitle">A state-of-the-art university timetable scheduler powered by constraint programming.</p>
+
+    <div class="content-grid">
+      <section class="info-card">
+        <h2>The Engine</h2>
+        <p>SchedulerPro utilizes Google OR-Tools (CP-SAT Solver) to find optimal, clash-free course schedules. The algorithm solves for multiple parameters, verifying that no professor teaches multiple classes at once, no room is double-booked, and student cohorts are free from overlap.</p>
+      </section>
+
+      <section class="info-card">
+        <h2>Our Methodology</h2>
+        <p>By transforming academic schedules into a Constraint Satisfaction Problem, we replace weeks of manual scheduling with milliseconds of server-side optimization. It respects room types (Lecture Halls vs. Labs) and professor availability, outputting optimal academic layouts.</p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 800px;
+    margin: 40px auto;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-purple);
+    background-color: var(--color-accent-purple-glow);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .info-card {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .info-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .info-card p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+</style>

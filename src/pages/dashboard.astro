@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabase';
 
 // Queries the database at build time to pre-render the dashboard
-
 // 1. Fetch data from the master_timetable table with joined tables
 let timetableData: any[] = [];
 let fetchError = null;
@@ -43,27 +42,17 @@ function getGridClassesForCell(day: string, slot: string) {
 }
 ---
 
-<Layout>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>University Timetable Scheduling Dashboard</title>
-    <!-- Import premium typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  </head>
-
+<Layout title="Interactive Schedule Dashboard - SchedulerPro">
   <main class="dashboard-container">
     <!-- Top Decorative Glow Mesh -->
     <div class="mesh-glow"></div>
 
     <!-- Header Area -->
-    <header class="dashboard-header">
+    <header class="dashboard-sub-header">
       <div class="header-content">
-        <span class="eyebrow">Academic Administration</span>
-        <h1>University Timetable.</h1>
-        <p class="description">Live interactive schedule dashboard driven by Constraint Satisfaction (CP-SAT) optimization.</p>
+        <span class="eyebrow-accent">Academic Administration</span>
+        <h1>Academic Dashboard.</h1>
+        <p class="description">Live interactive schedule dashboard driven by Constraint Programming (CP-SAT) optimization.</p>
       </div>
       <div class="header-actions">
         <button id="btn-view-grid" class="view-toggle-btn active">
@@ -237,592 +226,565 @@ function getGridClassesForCell(day: string, slot: string) {
       </>
     )}
   </main>
-
-  <!-- Client-side Interactive Logic for Filtering & View Toggle -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Toggle Views (Grid vs Table)
-      const btnViewGrid = document.getElementById('btn-view-grid');
-      const btnViewTable = document.getElementById('btn-view-table');
-      const gridView = document.getElementById('calendar-grid-view');
-      const tableView = document.getElementById('detailed-table-view');
-
-      btnViewGrid?.addEventListener('click', () => {
-        btnViewGrid.classList.add('active');
-        btnViewTable?.classList.remove('active');
-        gridView?.classList.add('active');
-        tableView?.classList.remove('active');
-      });
-
-      btnViewTable?.addEventListener('click', () => {
-        btnViewTable.classList.add('active');
-        btnViewGrid?.classList.remove('active');
-        tableView?.classList.add('active');
-        gridView?.classList.remove('active');
-      });
-
-      // Filter Inputs
-      const filterBatch = document.getElementById('filter-batch') as HTMLSelectElement;
-      const filterProf = document.getElementById('filter-prof') as HTMLSelectElement;
-      const filterRoom = document.getElementById('filter-room') as HTMLSelectElement;
-      const btnReset = document.getElementById('btn-reset-filters');
-
-      function applyFilters() {
-        const batchVal = filterBatch?.value || 'all';
-        const profVal = filterProf?.value || 'all';
-        const roomVal = filterRoom?.value || 'all';
-
-        // 1. Filter Calendar Cards
-        const cards = document.querySelectorAll('.schedule-card');
-        cards.forEach(card => {
-          const cardBatch = card.getAttribute('data-batch');
-          const cardProf = card.getAttribute('data-prof');
-          const cardRoom = card.getAttribute('data-room');
-
-          const matchBatch = batchVal === 'all' || cardBatch === batchVal;
-          const matchProf = profVal === 'all' || cardProf === profVal;
-          const matchRoom = roomVal === 'all' || cardRoom === roomVal;
-
-          if (matchBatch && matchProf && matchRoom) {
-            (card as HTMLElement).style.display = 'block';
-          } else {
-            (card as HTMLElement).style.display = 'none';
-          }
-        });
-
-        // 2. Filter Table Rows
-        const rows = document.querySelectorAll('.schedule-row');
-        rows.forEach(row => {
-          const rowBatch = row.getAttribute('data-batch');
-          const rowProf = row.getAttribute('data-prof');
-          const rowRoom = row.getAttribute('data-room');
-
-          const matchBatch = batchVal === 'all' || rowBatch === batchVal;
-          const matchProf = profVal === 'all' || rowProf === profVal;
-          const matchRoom = roomVal === 'all' || rowRoom === roomVal;
-
-          if (matchBatch && matchProf && matchRoom) {
-            (row as HTMLElement).style.display = 'table-row';
-          } else {
-            (row as HTMLElement).style.display = 'none';
-          }
-        });
-      }
-
-      // Add Event Listeners for Filters
-      filterBatch?.addEventListener('change', applyFilters);
-      filterProf?.addEventListener('change', applyFilters);
-      filterRoom?.addEventListener('change', applyFilters);
-
-      // Reset Button
-      btnReset?.addEventListener('click', () => {
-        if (filterBatch) filterBatch.value = 'all';
-        if (filterProf) filterProf.value = 'all';
-        if (filterRoom) filterRoom.value = 'all';
-        applyFilters();
-      });
-    });
-  </script>
-
-  <style>
-    /* Styling according to Vercel/Modern Dark-Ink Design Aesthetics */
-    :root {
-      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      
-      --color-bg: #09090b;
-      --color-canvas: #121214;
-      --color-border: #27272a;
-      --color-border-hover: #3f3f46;
-      --color-text-primary: #f4f4f5;
-      --color-text-secondary: #a1a1aa;
-      --color-text-muted: #52525b;
-      
-      --color-primary: #3b82f6;
-      --color-primary-glow: rgba(59, 130, 246, 0.15);
-      
-      --color-accent-purple: #c084fc;
-      --color-accent-amber: #fbbf24;
-      --color-accent-teal: #2dd4bf;
-    }
-
-    body {
-      background-color: var(--color-bg);
-      color: var(--color-text-primary);
-      font-family: var(--font-sans);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-
-    .dashboard-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Ambient decorative background glow */
-    .mesh-glow {
-      position: absolute;
-      top: -100px;
-      left: 20%;
-      right: 20%;
-      height: 350px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(59, 130, 246, 0.08) 50%, rgba(0,0,0,0) 70%);
-      filter: blur(80px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* Header Styling */
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 1px solid var(--color-border);
-      padding-bottom: 24px;
-      margin-bottom: 32px;
-    }
-
-    .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-accent-purple);
-      margin-bottom: 8px;
-      display: inline-block;
-    }
-
-    h1 {
-      font-size: 38px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin: 0 0 8px 0;
-      color: #ffffff;
-    }
-
-    .description {
-      font-size: 16px;
-      color: var(--color-text-secondary);
-      margin: 0;
-      max-width: 600px;
-      line-height: 1.5;
-    }
-
-    /* View Toggle Buttons */
-    .header-actions {
-      display: flex;
-      background-color: var(--color-canvas);
-      border: 1px solid var(--color-border);
-      padding: 4px;
-      border-radius: 8px;
-      gap: 4px;
-    }
-
-    .view-toggle-btn {
-      background: transparent;
-      border: none;
-      color: var(--color-text-secondary);
-      font-family: var(--font-sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .view-toggle-btn:hover {
-      color: #ffffff;
-    }
-
-    .view-toggle-btn.active {
-      background-color: #27272a;
-      color: #ffffff;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background-color: var(--color-canvas);
-      border: 1px solid var(--color-border);
-      padding: 24px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, var(--color-primary), var(--color-accent-purple));
-      opacity: 0.8;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--color-text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-
-    .stat-indicator {
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      font-weight: 400;
-    }
-
-    .stat-indicator.success {
-      color: var(--color-accent-teal);
-      font-weight: 500;
-    }
-
-    /* Filters Bar */
-    .filters-bar {
-      background-color: var(--color-canvas);
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      padding: 16px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .filter-group label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--color-text-secondary);
-    }
-
-    .filter-group select {
-      background-color: #1c1c1f;
-      border: 1px solid var(--color-border);
-      color: #ffffff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .filter-group select:focus {
-      border-color: var(--color-primary);
-    }
-
-    .reset-btn {
-      background-color: transparent;
-      border: 1px solid var(--color-border);
-      color: var(--color-text-secondary);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .reset-btn:hover {
-      background-color: #1c1c1f;
-      color: #ffffff;
-      border-color: var(--color-border-hover);
-    }
-
-    /* View Panel Toggle */
-    .view-panel {
-      display: none;
-    }
-
-    .view-panel.active {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    /* Calendar Grid View */
-    .calendar-wrapper {
-      overflow-x: auto;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      background-color: var(--color-canvas);
-    }
-
-    .calendar-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      min-width: 1000px;
-    }
-
-    .calendar-table th, 
-    .calendar-table td {
-      border: 1px solid var(--color-border);
-      padding: 16px;
-    }
-
-    .calendar-table th {
-      background-color: #161618;
-      color: var(--color-text-primary);
-      font-weight: 600;
-      font-size: 14px;
-      text-align: center;
-      padding: 20px 16px;
-    }
-
-    .corner-header {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      width: 120px;
-    }
-
-    .day-header-cell {
-      background-color: #161618;
-      text-align: center;
-      font-size: 14px;
-      color: #ffffff;
-    }
-
-    .calendar-cell {
-      height: 140px;
-      vertical-align: top;
-      background-color: rgba(255,255,255,0.01);
-      position: relative;
-    }
-
-    .empty-cell-text {
-      color: var(--color-text-muted);
-      font-size: 12px;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    /* Schedule Card inside Grid */
-    .schedule-card {
-      background-color: #1c1c1f;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 8px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .schedule-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--color-primary);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .badge {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .batch-badge {
-      background-color: rgba(192, 132, 252, 0.15);
-      color: var(--color-accent-purple);
-      border: 1px solid rgba(192, 132, 252, 0.2);
-    }
-
-    .room-badge {
-      background-color: rgba(251, 191, 36, 0.15);
-      color: var(--color-accent-amber);
-      border: 1px solid rgba(251, 191, 36, 0.2);
-    }
-
-    .subject-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffffff;
-      line-height: 1.4;
-      margin-bottom: 6px;
-    }
-
-    .professor-name {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Detailed Table View */
-    .table-wrapper {
-      overflow-x: auto;
-      border: 1px solid var(--color-border);
-      border-radius: 12px;
-      background-color: var(--color-canvas);
-    }
-
-    .schedule-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    .schedule-table th, 
-    .schedule-table td {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--color-border);
-      font-size: 14px;
-    }
-
-    .schedule-table th {
-      background-color: #161618;
-      color: var(--color-text-primary);
-      font-weight: 600;
-    }
-
-    .schedule-row {
-      transition: background-color 0.2s;
-    }
-
-    .schedule-row:hover {
-      background-color: rgba(255,255,255,0.02);
-    }
-
-    .schedule-row td strong {
-      color: #ffffff;
-    }
-
-    .slot-pill {
-      background-color: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      border: 1px solid rgba(59, 130, 246, 0.25);
-    }
-
-    .subject-cell {
-      font-weight: 500;
-      color: #ffffff;
-    }
-
-    .room-pill {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .room-pill strong {
-      color: var(--color-accent-amber);
-    }
-
-    .room-type-label {
-      font-size: 11px;
-      color: var(--color-text-secondary);
-    }
-
-    /* Error Banner */
-    .error-banner {
-      background-color: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 32px;
-    }
-
-    .error-banner h3 {
-      color: #ef4444;
-      margin-top: 0;
-    }
-
-    .error-code {
-      display: block;
-      font-family: var(--font-mono);
-      background-color: rgba(0,0,0,0.3);
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 12px;
-      color: #f87171;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-      }
-      
-      .header-actions {
-        width: 100%;
-      }
-      
-      .view-toggle-btn {
-        flex: 1;
-        justify-content: center;
-      }
-      
-      .filters-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .filter-group {
-        width: 100%;
-      }
-      
-      .reset-btn {
-        width: 100%;
-      }
-    }
-  </style>
 </Layout>
+
+<!-- Client-side Interactive Logic for Filtering & View Toggle -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Toggle Views (Grid vs Table)
+    const btnViewGrid = document.getElementById('btn-view-grid');
+    const btnViewTable = document.getElementById('btn-view-table');
+    const gridView = document.getElementById('calendar-grid-view');
+    const tableView = document.getElementById('detailed-table-view');
+
+    btnViewGrid?.addEventListener('click', () => {
+      btnViewGrid.classList.add('active');
+      btnViewTable?.classList.remove('active');
+      gridView?.classList.add('active');
+      tableView?.classList.remove('active');
+    });
+
+    btnViewTable?.addEventListener('click', () => {
+      btnViewTable.classList.add('active');
+      btnViewGrid?.classList.remove('active');
+      tableView?.classList.add('active');
+      gridView?.classList.remove('active');
+    });
+
+    // Filter Inputs
+    const filterBatch = document.getElementById('filter-batch') as HTMLSelectElement;
+    const filterProf = document.getElementById('filter-prof') as HTMLSelectElement;
+    const filterRoom = document.getElementById('filter-room') as HTMLSelectElement;
+    const btnReset = document.getElementById('btn-reset-filters');
+
+    function applyFilters() {
+      const batchVal = filterBatch?.value || 'all';
+      const profVal = filterProf?.value || 'all';
+      const roomVal = filterRoom?.value || 'all';
+
+      // 1. Filter Calendar Cards
+      const cards = document.querySelectorAll('.schedule-card');
+      cards.forEach(card => {
+        const cardBatch = card.getAttribute('data-batch');
+        const cardProf = card.getAttribute('data-prof');
+        const cardRoom = card.getAttribute('data-room');
+
+        const matchBatch = batchVal === 'all' || cardBatch === batchVal;
+        const matchProf = profVal === 'all' || cardProf === profVal;
+        const matchRoom = roomVal === 'all' || cardRoom === roomVal;
+
+        if (matchBatch && matchProf && matchRoom) {
+          (card as HTMLElement).style.display = 'block';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      // 2. Filter Table Rows
+      const rows = document.querySelectorAll('.schedule-row');
+      rows.forEach(row => {
+        const rowBatch = row.getAttribute('data-batch');
+        const rowProf = row.getAttribute('data-prof');
+        const rowRoom = row.getAttribute('data-room');
+
+        const matchBatch = batchVal === 'all' || rowBatch === batchVal;
+        const matchProf = profVal === 'all' || rowProf === profVal;
+        const matchRoom = roomVal === 'all' || rowRoom === roomVal;
+
+        if (matchBatch && matchProf && matchRoom) {
+          (row as HTMLElement).style.display = 'table-row';
+        } else {
+          (row as HTMLElement).style.display = 'none';
+        }
+      });
+    }
+
+    // Add Event Listeners for Filters
+    filterBatch?.addEventListener('change', applyFilters);
+    filterProf?.addEventListener('change', applyFilters);
+    filterRoom?.addEventListener('change', applyFilters);
+
+    // Reset Button
+    btnReset?.addEventListener('click', () => {
+      if (filterBatch) filterBatch.value = 'all';
+      if (filterProf) filterProf.value = 'all';
+      if (filterRoom) filterRoom.value = 'all';
+      applyFilters();
+    });
+  });
+</script>
+
+<style>
+  /* Styling adapted to utilize Global Layout theme variables */
+  .dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Ambient decorative background glow */
+  .mesh-glow {
+    position: absolute;
+    top: -100px;
+    left: 20%;
+    right: 20%;
+    height: 350px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(59, 130, 246, 0.04) 50%, rgba(0,0,0,0) 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Sub Header Styling */
+  .dashboard-sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow-accent {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-purple);
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 8px 0;
+    color: var(--color-text-primary);
+  }
+
+  .description {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+
+  /* View Toggle Buttons */
+  .header-actions {
+    display: flex;
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 4px;
+    border-radius: 8px;
+    gap: 4px;
+  }
+
+  .view-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .view-toggle-btn:hover {
+    color: var(--color-text-primary);
+  }
+
+  .view-toggle-btn.active {
+    background-color: var(--color-border);
+    color: var(--color-text-primary);
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 24px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-accent-purple));
+    opacity: 0.8;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  .stat-indicator {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+  }
+
+  .stat-indicator.success {
+    color: var(--color-accent-teal);
+    font-weight: 500;
+  }
+
+  /* Filters Bar */
+  .filters-bar {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .filter-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .filter-group select {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .filter-group select:focus {
+    border-color: var(--color-primary);
+  }
+
+  .reset-btn {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+
+  /* View Panel Toggle */
+  .view-panel {
+    display: none;
+  }
+
+  .view-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  /* Calendar Grid View */
+  .calendar-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-md);
+  }
+
+  .calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 1000px;
+  }
+
+  .calendar-table th, 
+  .calendar-table td {
+    border: 1px solid var(--color-border);
+    padding: 16px;
+  }
+
+  .calendar-table th {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 16px;
+  }
+
+  .corner-header {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    width: 120px;
+  }
+
+  .day-header-cell {
+    background-color: var(--color-bg);
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-primary);
+  }
+
+  .calendar-cell {
+    height: 140px;
+    vertical-align: top;
+    background-color: rgba(255,255,255,0.01);
+    position: relative;
+  }
+
+  .empty-cell-text {
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  /* Schedule Card inside Grid */
+  .schedule-card {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .schedule-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .batch-badge {
+    background-color: var(--color-accent-purple-glow);
+    color: var(--color-accent-purple);
+    border: 1px solid rgba(192, 132, 252, 0.2);
+  }
+
+  .room-badge {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--color-accent-amber);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  .subject-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .professor-name {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Detailed Table View */
+  .table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-md);
+  }
+
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .schedule-table th, 
+  .schedule-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+  }
+
+  .schedule-table th {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .schedule-row {
+    transition: background-color 0.2s;
+  }
+
+  .schedule-row:hover {
+    background-color: rgba(255,255,255,0.02);
+  }
+
+  .schedule-row td strong {
+    color: var(--color-text-primary);
+  }
+
+  .slot-pill {
+    background-color: var(--color-primary-glow);
+    color: var(--color-primary);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+
+  .subject-cell {
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .room-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .room-pill strong {
+    color: var(--color-accent-amber);
+  }
+
+  .room-type-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  /* Error Banner */
+  .error-banner {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .error-banner h3 {
+    color: #ef4444;
+    margin-top: 0;
+  }
+
+  .error-code {
+    display: block;
+    font-family: var(--font-mono);
+    background-color: rgba(0,0,0,0.3);
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 12px;
+    color: #f87171;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .dashboard-sub-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .header-actions {
+      width: 100%;
+    }
+    
+    .view-toggle-btn {
+      flex: 1;
+      justify-content: center;
+    }
+    
+    .filters-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .filter-group {
+      width: 100%;
+    }
+    
+    .reset-btn {
+      width: 100%;
+    }
+  }
+</style>

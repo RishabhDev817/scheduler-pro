@@ -1,0 +1,89 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Terms of Service - SchedulerPro">
+  <div class="page-container">
+    <span class="badge">Legal Agreement</span>
+    <h1>Terms of Service.</h1>
+    <p class="subtitle">Standard usage terms for SchedulerPro administrative tools and timetable listings.</p>
+
+    <div class="terms-document">
+      <section class="terms-section">
+        <h2>1. User Account & Role Permissions</h2>
+        <p>Access to scheduling constraints, databases, and automated email dispatch tools is strictly limited to authorized academic administrative coordinators. Users must ensure that API credentials and env keys are stored securely.</p>
+      </section>
+
+      <section class="terms-section">
+        <h2>2. Permitted Use</h2>
+        <p>This software is provided for the purpose of university timetable generation. Generating spam notifications, injecting malicious records, or querying the Supabase database without authorization violates academic policies and is strictly prohibited.</p>
+      </section>
+
+      <section class="terms-section">
+        <h2>3. Disclaimer of Warranty</h2>
+        <p>SchedulerPro is provided "as is" without warranty of any kind. While Google OR-Tools ensures a conflict-free mathematical solution, final schedule verification and implementation are the sole responsibility of the Academic Registrar.</p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 800px;
+    margin: 40px auto;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-amber);
+    background-color: rgba(245, 158, 11, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .terms-document {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .terms-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .terms-section p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+  }
+</style>

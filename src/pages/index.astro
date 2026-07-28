@@ -1,11 +1,222 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Welcome to SchedulerPro - Automated University Scheduling">
+  <div class="hero-section">
+    <!-- Top Decorative Glow Mesh -->
+    <div class="mesh-glow"></div>
+    
+    <span class="eyebrow">Academic Platform</span>
+    <h1>The Automated University Scheduling Cloud.</h1>
+    <p class="subtitle">
+      Optimized, conflict-free course timetables generated in milliseconds using Constraint Satisfaction Algorithms.
+    </p>
+    
+    <div class="cta-group">
+      <a href="/dashboard" class="primary-btn">Enter Dashboard</a>
+      <a href="/about" class="secondary-btn">Learn How It Works</a>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="icon-wrap color-purple">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+      </div>
+      <h3>Visual Calendar Grid</h3>
+      <p>Analyze classroom allocations, student batch conflicts, and professor schedules day-by-day and slot-by-slot.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon-wrap color-blue">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <h3>CP-SAT Optimizer</h3>
+      <p>Google OR-Tools solver prevents double-bookings, honors room capacity limits, and respects faculty specialties.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon-wrap color-teal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+      </div>
+      <h3>Email Notifications</h3>
+      <p>Automatically group schedule details by faculty member and dispatch formatted teaching timetables via SMTP TLS.</p>
+    </div>
+  </div>
 </Layout>
+
+<style>
+  .hero-section {
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Ambient decorative background glow */
+  .mesh-glow {
+    position: absolute;
+    top: -40px;
+    left: 20%;
+    right: 20%;
+    height: 300px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(59, 130, 246, 0.06) 50%, rgba(0,0,0,0) 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-purple);
+    background-color: var(--color-accent-purple-glow);
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: 54px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .cta-group {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .primary-btn {
+    text-decoration: none;
+    background-color: var(--color-text-primary);
+    color: var(--color-bg);
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: var(--shadow-sm);
+    transition: opacity 0.2s;
+  }
+
+  .primary-btn:hover {
+    opacity: 0.9;
+  }
+
+  .secondary-btn {
+    text-decoration: none;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: all 0.2s;
+  }
+
+  .secondary-btn:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-border-hover);
+  }
+
+  /* Feature Cards section */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+    padding: 40px 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .feature-card {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-hover);
+  }
+
+  .icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .color-purple {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--color-accent-purple);
+  }
+
+  .color-blue {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--color-primary);
+  }
+
+  .color-teal {
+    background-color: rgba(13, 148, 136, 0.1);
+    color: var(--color-accent-teal);
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 38px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+    }
+    
+    .cta-group {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .primary-btn, 
+    .secondary-btn {
+      width: 100%;
+    }
+  }
+</style>
