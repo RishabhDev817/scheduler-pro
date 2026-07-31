@@ -1,0 +1,1233 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabase';
+import fs from 'fs';
+import path from 'path';
+
+export const prerender = false;
+
+// 1. Fetch current data on the server to render lists
+let professors: any[] = [];
+let rooms: any[] = [];
+let subjects: any[] = [];
+let batches: any[] = [];
+let fetchError = null;
+
+// Load settings from settings.json
+let settings = {
+  activeDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  totalSlots: 4,
+  breakSlot: "Slot 4"
+};
+
+try {
+  const settingsPath = path.join(process.cwd(), 'settings.json');
+  if (fs.existsSync(settingsPath)) {
+    settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+  }
+} catch (e: any) {
+  console.error("Failed to load settings in admin frontmatter:", e);
+}
+
+try {
+  const [profRes, roomRes, subjRes, batchRes] = await Promise.all([
+    supabase.from('professors').select('*').order('id', { ascending: true }),
+    supabase.from('rooms').select('*').order('id', { ascending: true }),
+    supabase.from('subjects').select('*').order('id', { ascending: true }),
+    supabase.from('batches').select('*').order('id', { ascending: true })
+  ]);
+
+  if (profRes.error) throw profRes.error;
+  if (roomRes.error) throw roomRes.error;
+  if (subjRes.error) throw subjRes.error;
+  if (batchRes.error) throw batchRes.error;
+
+  professors = profRes.data || [];
+  rooms = roomRes.data || [];
+  subjects = subjRes.data || [];
+  batches = batchRes.data || [];
+} catch (e: any) {
+  console.error("Failed to load database lists for admin:", e);
+  fetchError = e.message || e;
+}
+---
+
+<Layout title="Admin Portal - SchedulerPro">
+  <main class="admin-container">
+    <!-- Top Decorative Glow Mesh -->
+    <div class="mesh-glow"></div>
+
+    <!-- Header Area -->
+    <header class="admin-header">
+      <div class="header-content">
+        <span class="eyebrow-accent">System Administration</span>
+        <h1>Administration Portal.</h1>
+        <p class="description">Configure scheduling parameters, manage academic entities, and run the constraint satisfaction solver.</p>
+      </div>
+      <div class="header-actions">
+        <a href="/dashboard" class="dashboard-link-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+          Go to Dashboard
+        </a>
+      </div>
+    </header>
+
+    {fetchError && (
+      <div class="error-banner">
+        <h3>Database Error</h3>
+        <p>Could not load administration lists. Verify Supabase connection settings.</p>
+        <code class="error-code">{fetchError}</code>
+      </div>
+    )}
+
+    <!-- Navigation Tabs -->
+    <nav class="admin-tabs" id="admin-tabs-nav">
+      <button class="tab-btn active" data-tab="scheduler">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        Scheduler & Config
+      </button>
+      <button class="tab-btn" data-tab="professors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Faculty ({professors.length})
+      </button>
+      <button class="tab-btn" data-tab="rooms">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="21" x2="9" y2="9"></line><line x1="3" y1="9" x2="21" y2="9"></line></svg>
+        Classrooms ({rooms.length})
+      </button>
+      <button class="tab-btn" data-tab="subjects">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Subjects ({subjects.length})
+      </button>
+      <button class="tab-btn" data-tab="batches">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Batches ({batches.length})
+      </button>
+    </nav>
+
+    <!-- Global Action Notification Toast -->
+    <div id="toast-notif" class="toast hidden"></div>
+
+    <!-- Panel Content Area -->
+    <div class="panels-container">
+      
+      <!-- Scheduler & Config Panel -->
+      <section id="panel-scheduler" class="tab-panel active">
+        <div class="panel-layout grid-2">
+          
+          <!-- Configuration Card -->
+          <div class="admin-card">
+            <h2>Timetable Settings</h2>
+            <p class="card-desc">Configure parameters used by the AI Solver and Dashboard timetable grid.</p>
+            
+            <form id="form-settings" class="settings-form">
+              <!-- Active Days Checkboxes -->
+              <div class="form-group">
+                <label>Active Days of the Week</label>
+                <div class="checkbox-grid">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        name="activeDays" 
+                        value={day} 
+                        checked={settings.activeDays.includes(day)}
+                      />
+                      <span>{day}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Total Slots -->
+              <div class="form-group">
+                <label for="input-total-slots">Total Slots Per Day</label>
+                <div class="counter-input">
+                  <button type="button" id="btn-slots-dec" class="counter-btn">-</button>
+                  <input 
+                    type="number" 
+                    id="input-total-slots" 
+                    name="totalSlots" 
+                    min="1" 
+                    max="10" 
+                    value={settings.totalSlots} 
+                    readonly
+                  />
+                  <button type="button" id="btn-slots-inc" class="counter-btn">+</button>
+                </div>
+                <small class="form-help">Number of academic hours/periods per day (Max 10).</small>
+              </div>
+
+              <!-- Designate Break Slot -->
+              <div class="form-group">
+                <label for="select-break-slot">Designated Break Slot</label>
+                <select id="select-break-slot" name="breakSlot">
+                  <option value="none">No Break designated</option>
+                  {Array.from({ length: settings.totalSlots }, (_, i) => `Slot ${i + 1}`).map(slot => (
+                    <option value={slot} selected={settings.breakSlot === slot}>{slot}</option>
+                  ))}
+                </select>
+                <small class="form-help">This slot will be grayed out on the dashboard. The solver will skip scheduling lessons in it.</small>
+              </div>
+
+              <button type="submit" class="primary-submit-btn">Save Configurations</button>
+            </form>
+          </div>
+
+          <!-- Execution Card -->
+          <div class="admin-card execution-card">
+            <h2>AI Scheduler Execution</h2>
+            <p class="card-desc">Execute Google OR-Tools constraint satisfaction solver. This clears previous schedule records and creates a new clash-free layout.</p>
+            
+            <div class="scheduler-action-box">
+              <button id="btn-run-scheduler" class="run-solver-btn">
+                <div class="spinner hidden" id="scheduler-spinner"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="scheduler-icon"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Run AI Scheduler</span>
+              </button>
+              
+              <div class="solver-status" id="solver-status-message">
+                Ready to schedule lessons.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Faculty Management Panel -->
+      <section id="panel-professors" class="tab-panel">
+        <div class="panel-layout grid-2">
+          <!-- Add form -->
+          <div class="admin-card">
+            <h2>Add Faculty Member</h2>
+            <p class="card-desc">Create a new professor record in the database database.</p>
+            <form id="form-add-professor" class="entity-form">
+              <div class="form-group">
+                <label for="prof-name">Full Name</label>
+                <input type="text" id="prof-name" name="full_name" required placeholder="e.g. Dr. Jane Foster" />
+              </div>
+              <div class="form-group">
+                <label for="prof-email">Email Address</label>
+                <input type="email" id="prof-email" name="email" required placeholder="e.g. jfoster@university.edu" />
+              </div>
+              <div class="form-group">
+                <label for="prof-dept">Department</label>
+                <input type="text" id="prof-dept" name="department" required placeholder="e.g. Computer Science & AI" />
+              </div>
+              <div class="form-group">
+                <label for="prof-hours">Maximum Weekly Hours</label>
+                <input type="number" id="prof-hours" name="max_weekly_hours" min="1" max="40" value="18" required />
+              </div>
+              <button type="submit" class="primary-submit-btn">Add Professor</button>
+            </form>
+          </div>
+
+          <!-- List and Delete -->
+          <div class="admin-card">
+            <h2>Active Faculty Directory</h2>
+            <p class="card-desc">List of professors available for timetable scheduling.</p>
+            <div class="list-wrapper">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Professor Name</th>
+                    <th>Department</th>
+                    <th>Max Hours</th>
+                    <th class="actions-header">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {professors.map(p => (
+                    <tr class="entity-row">
+                      <td>
+                        <div class="name-cell">
+                          <strong>{p.full_name}</strong>
+                          <span>{p.email}</span>
+                        </div>
+                      </td>
+                      <td>{p.department}</td>
+                      <td>{p.max_weekly_hours}h / wk</td>
+                      <td class="action-cell">
+                        <button class="delete-entity-btn" data-type="professors" data-id={p.id} data-name={p.full_name}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {professors.length === 0 && (
+                    <tr>
+                      <td colspan="4" class="empty-list">No faculty members found in database.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rooms Panel -->
+      <section id="panel-rooms" class="tab-panel">
+        <div class="panel-layout grid-2">
+          <!-- Add form -->
+          <div class="admin-card">
+            <h2>Add Classroom / Lab</h2>
+            <p class="card-desc">Register a new campus room or laboratory room.</p>
+            <form id="form-add-room" class="entity-form">
+              <div class="form-group">
+                <label for="room-number">Room Number / Name</label>
+                <input type="text" id="room-number" name="room_number" required placeholder="e.g. CR-302, Lab-104" />
+              </div>
+              <div class="form-group">
+                <label for="room-type">Room Type</label>
+                <select id="room-type" name="room_type" required>
+                  <option value="Lecture Hall">Lecture Hall</option>
+                  <option value="AI/ML Lab">AI/ML Lab</option>
+                  <option value="Standard Classroom">Standard Classroom</option>
+                  <option value="Seminar Room">Seminar Room</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="room-cap">Student Capacity</label>
+                <input type="number" id="room-cap" name="capacity" min="5" max="200" value="60" required />
+              </div>
+              <button type="submit" class="primary-submit-btn">Add Classroom</button>
+            </form>
+          </div>
+
+          <!-- List and Delete -->
+          <div class="admin-card">
+            <h2>Classroom Inventory</h2>
+            <p class="card-desc">Rooms currently available for allocation.</p>
+            <div class="list-wrapper">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Room Number</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th class="actions-header">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rooms.map(r => (
+                    <tr class="entity-row">
+                      <td><strong>{r.room_number}</strong></td>
+                      <td>
+                        <span class={`room-type-pill ${r.room_type.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}>
+                          {r.room_type}
+                        </span>
+                      </td>
+                      <td>{r.capacity} seats</td>
+                      <td class="action-cell">
+                        <button class="delete-entity-btn" data-type="rooms" data-id={r.id} data-name={r.room_number}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {rooms.length === 0 && (
+                    <tr>
+                      <td colspan="4" class="empty-list">No classrooms found in database.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Subjects Panel -->
+      <section id="panel-subjects" class="tab-panel">
+        <div class="panel-layout grid-2">
+          <!-- Add form -->
+          <div class="admin-card">
+            <h2>Add Subject Course</h2>
+            <p class="card-desc">Create a new course curriculum subject entry.</p>
+            <form id="form-add-subject" class="entity-form">
+              <div class="form-group">
+                <label for="subj-name">Subject Title</label>
+                <input type="text" id="subj-name" name="subject_name" required placeholder="e.g. Advanced Operating Systems" />
+              </div>
+              <div class="form-group">
+                <label for="subj-room-type">Required Classroom Type</label>
+                <select id="subj-room-type" name="required_room_type" required>
+                  <option value="Lecture Hall">Lecture Hall</option>
+                  <option value="AI/ML Lab">AI/ML Lab</option>
+                  <option value="Standard Classroom">Standard Classroom</option>
+                  <option value="Seminar Room">Seminar Room</option>
+                </select>
+              </div>
+              <button type="submit" class="primary-submit-btn">Add Subject</button>
+            </form>
+          </div>
+
+          <!-- List and Delete -->
+          <div class="admin-card">
+            <h2>Curriculum Subjects</h2>
+            <p class="card-desc">Subjects requiring weekly course scheduling.</p>
+            <div class="list-wrapper">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Subject Title</th>
+                    <th>Required Space</th>
+                    <th class="actions-header">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {subjects.map(s => (
+                    <tr class="entity-row">
+                      <td><strong>{s.subject_name}</strong></td>
+                      <td>
+                        <span class={`room-type-pill ${s.required_room_type.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}>
+                          {s.required_room_type}
+                        </span>
+                      </td>
+                      <td class="action-cell">
+                        <button class="delete-entity-btn" data-type="subjects" data-id={s.id} data-name={s.subject_name}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {subjects.length === 0 && (
+                    <tr>
+                      <td colspan="3" class="empty-list">No subjects found in database.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Batches Panel -->
+      <section id="panel-batches" class="tab-panel">
+        <div class="panel-layout grid-2">
+          <!-- Add form -->
+          <div class="admin-card">
+            <h2>Add Student Batch</h2>
+            <p class="card-desc">Create a new academic student cohort batch.</p>
+            <form id="form-add-batch" class="entity-form">
+              <div class="form-group">
+                <label for="batch-name">Batch Name</label>
+                <input type="text" id="batch-name" name="batch_name" required placeholder="e.g. BCA 3rd Year" />
+              </div>
+              <div class="form-group">
+                <label for="batch-count">Total Student Intake</label>
+                <input type="number" id="batch-count" name="student_count" min="5" max="150" value="50" required />
+              </div>
+              <button type="submit" class="primary-submit-btn">Add Batch</button>
+            </form>
+          </div>
+
+          <!-- List and Delete -->
+          <div class="admin-card">
+            <h2>Active Student Cohorts</h2>
+            <p class="card-desc">Groups attending courses scheduled by the solver.</p>
+            <div class="list-wrapper">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Batch Name</th>
+                    <th>Cohort Size</th>
+                    <th class="actions-header">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {batches.map(b => (
+                    <tr class="entity-row">
+                      <td><strong>{b.batch_name}</strong></td>
+                      <td>{b.student_count} students</td>
+                      <td class="action-cell">
+                        <button class="delete-entity-btn" data-type="batches" data-id={b.id} data-name={b.batch_name}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {batches.length === 0 && (
+                    <tr>
+                      <td colspan="3" class="empty-list">No student batches found in database.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</Layout>
+
+<!-- Client Side Logic -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. TABS SYSTEM
+    const tabs = document.querySelectorAll('#admin-tabs-nav .tab-btn');
+    const panels = document.querySelectorAll('.panels-container .tab-panel');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const activePanel = document.getElementById(`panel-${targetTab}`);
+        if (activePanel) activePanel.classList.add('active');
+      });
+    });
+
+    // 2. TOAST SYSTEM
+    const toast = document.getElementById('toast-notif');
+    function showToast(message, isError = false) {
+      if (!toast) return;
+      toast.textContent = message;
+      toast.className = `toast ${isError ? 'error' : 'success'}`;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 5000);
+    }
+
+    // 3. SETTINGS SYSTEM (Total Slots +/- counter)
+    const btnDec = document.getElementById('btn-slots-dec');
+    const btnInc = document.getElementById('btn-slots-inc');
+    const inputSlots = document.getElementById('input-total-slots') as HTMLInputElement;
+    const selectBreak = document.getElementById('select-break-slot') as HTMLSelectElement;
+
+    function updateBreakSlotOptions(totalSlots) {
+      const currentValue = selectBreak.value;
+      selectBreak.innerHTML = '';
+      
+      const noneOpt = document.createElement('option');
+      noneOpt.value = 'none';
+      noneOpt.textContent = 'No Break designated';
+      selectBreak.appendChild(noneOpt);
+
+      for (let i = 1; i <= totalSlots; i++) {
+        const optName = `Slot ${i}`;
+        const opt = document.createElement('option');
+        opt.value = optName;
+        opt.textContent = optName;
+        if (currentValue === optName) {
+          opt.selected = true;
+        }
+        selectBreak.appendChild(opt);
+      }
+    }
+
+    btnDec?.addEventListener('click', () => {
+      if (!inputSlots) return;
+      const current = parseInt(inputSlots.value);
+      if (current > 1) {
+        inputSlots.value = (current - 1).toString();
+        updateBreakSlotOptions(current - 1);
+      }
+    });
+
+    btnInc?.addEventListener('click', () => {
+      if (!inputSlots) return;
+      const current = parseInt(inputSlots.value);
+      if (current < 10) {
+        inputSlots.value = (current + 1).toString();
+        updateBreakSlotOptions(current + 1);
+      }
+    });
+
+    // Handle Settings Submission
+    const formSettings = document.getElementById('form-settings') as HTMLFormElement;
+    formSettings?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(formSettings);
+      const activeDays = formData.getAll('activeDays');
+      const totalSlots = inputSlots ? parseInt(inputSlots.value) : 4;
+      const breakSlotVal = selectBreak.value;
+      const breakSlot = breakSlotVal === 'none' ? null : breakSlotVal;
+
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ activeDays, totalSlots, breakSlot })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('Scheduler settings saved successfully!');
+        } else {
+          showToast(result.error || 'Failed to save settings.', true);
+        }
+      } catch (err: any) {
+        showToast('Unexpected network error saving settings.', true);
+      }
+    });
+
+    // 4. ENTITY FORMS (ADD ENTITIES)
+    const entityForms = [
+      { id: 'form-add-professor', url: '/api/professors' },
+      { id: 'form-add-room', url: '/api/rooms' },
+      { id: 'form-add-subject', url: '/api/subjects' },
+      { id: 'form-add-batch', url: '/api/batches' }
+    ];
+
+    entityForms.forEach(({ id, url }) => {
+      const form = document.getElementById(id) as HTMLFormElement;
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data: any = {};
+        formData.forEach((value, key) => {
+          data[key] = value;
+        });
+
+        try {
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await res.json();
+          if (result.success) {
+            showToast('Entry successfully added to database!');
+            setTimeout(() => window.location.reload(), 800);
+          } else {
+            showToast(result.error || 'Failed to insert entry.', true);
+          }
+        } catch (err) {
+          showToast('Unexpected network error inserting record.', true);
+        }
+      });
+    });
+
+    // 5. DELETE ENTITIES
+    const deleteButtons = document.querySelectorAll('.delete-entity-btn');
+    deleteButtons.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const type = btn.getAttribute('data-type');
+        const name = btn.getAttribute('data-name');
+        
+        if (!confirm(`Are you sure you want to delete "${name}" from ${type}?`)) {
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/${type}?id=${id}`, {
+            method: 'DELETE'
+          });
+          const result = await res.json();
+          if (result.success) {
+            showToast(`"${name}" was deleted successfully.`);
+            setTimeout(() => window.location.reload(), 800);
+          } else {
+            showToast(result.error || `Failed to delete entry.`, true);
+          }
+        } catch (err) {
+          showToast('Unexpected network error deleting record.', true);
+        }
+      });
+    });
+
+    // 6. SCHEDULER RUN LOGIC
+    const btnRun = document.getElementById('btn-run-scheduler');
+    const spinner = document.getElementById('scheduler-spinner');
+    const icon = document.getElementById('scheduler-icon');
+    const statusMsg = document.getElementById('solver-status-message');
+    const btnText = btnRun?.querySelector('span');
+
+    btnRun?.addEventListener('click', async () => {
+      // Disable UI during generation
+      btnRun.setAttribute('disabled', 'true');
+      spinner?.classList.remove('hidden');
+      icon?.classList.add('hidden');
+      if (btnText) btnText.textContent = 'Generating Schedule...';
+      if (statusMsg) {
+        statusMsg.textContent = 'AI Solver running constraint programming model... please wait.';
+        statusMsg.className = 'solver-status running';
+      }
+
+      try {
+        const res = await fetch('/api/generate', { method: 'POST' });
+        const result = await res.json();
+        
+        if (result.success) {
+          showToast('Timetable schedule generated successfully!');
+          if (statusMsg) {
+            statusMsg.textContent = '✅ Optimal Schedule Generated Successfully!';
+            statusMsg.className = 'solver-status success';
+          }
+          if (btnText) btnText.textContent = 'Schedule Generated!';
+          spinner?.classList.add('hidden');
+          
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 2000);
+        } else {
+          showToast(result.error || 'Failed to generate timetable.', true);
+          if (statusMsg) {
+            statusMsg.textContent = 'Failure: Solver failed to find a valid layout.';
+            statusMsg.className = 'solver-status error';
+          }
+          // Restore button state
+          btnRun.removeAttribute('disabled');
+          spinner?.classList.add('hidden');
+          icon?.classList.remove('hidden');
+          if (btnText) btnText.textContent = 'Run AI Scheduler';
+        }
+      } catch (err: any) {
+        showToast('Unexpected error launching scheduler API.', true);
+        if (statusMsg) {
+          statusMsg.textContent = 'Network execution failure.';
+          statusMsg.className = 'solver-status error';
+        }
+        // Restore button state
+        btnRun.removeAttribute('disabled');
+        spinner?.classList.add('hidden');
+        icon?.classList.remove('hidden');
+        if (btnText) btnText.textContent = 'Run AI Scheduler';
+      }
+    });
+
+  });
+</script>
+
+<style>
+  .admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .mesh-glow {
+    position: absolute;
+    top: -100px;
+    left: 20%;
+    right: 20%;
+    height: 350px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 50%, rgba(0,0,0,0) 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow-accent {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-purple);
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 8px 0;
+    color: var(--color-text-primary);
+  }
+
+  .description {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 650px;
+    line-height: 1.5;
+  }
+
+  .dashboard-link-btn {
+    text-decoration: none;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .dashboard-link-btn:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-border-hover);
+  }
+
+  /* Admin Tabs Navigation */
+  .admin-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 32px;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-secondary);
+    padding: 12px 20px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-border-hover);
+  }
+
+  .tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  /* Panels layout */
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .panel-layout.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .panel-layout.grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Admin cards */
+  .admin-card {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .admin-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+
+  /* Forms styling */
+  .settings-form, .entity-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="number"],
+  .form-group select {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .form-help {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    line-height: 1.3;
+  }
+
+  /* Checkbox Grid styling */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    accent-color: var(--color-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  /* Counter Input styling */
+  .counter-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 150px;
+  }
+
+  .counter-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 18px;
+    font-weight: 500;
+    width: 44px;
+    height: 40px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .counter-btn:hover {
+    background-color: var(--color-border);
+  }
+
+  .counter-input input {
+    border: none !important;
+    background-color: transparent !important;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    width: 62px;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Submit Buttons */
+  .primary-submit-btn {
+    background-color: var(--color-text-primary);
+    color: var(--color-bg);
+    border: 1px solid var(--color-text-primary);
+    padding: 12px 18px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-align: center;
+  }
+
+  .primary-submit-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Execution / Rescheduling box */
+  .execution-card {
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+
+  .scheduler-action-box {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .run-solver-btn {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-purple) 100%);
+    border: none;
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  }
+
+  .run-solver-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.4);
+  }
+
+  .run-solver-btn:active {
+    transform: translateY(1px);
+  }
+
+  .run-solver-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .solver-status {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
+
+  .solver-status.running {
+    color: var(--color-primary);
+  }
+
+  .solver-status.success {
+    color: var(--color-accent-teal);
+    font-weight: 600;
+  }
+
+  .solver-status.error {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+
+
+  /* Directory Lists and Tables */
+  .list-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+  }
+
+  .entity-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .entity-table th, .entity-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .entity-table th {
+    background-color: var(--color-bg);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .entity-row {
+    transition: background-color 0.2s;
+  }
+
+  .entity-row:hover {
+    background-color: rgba(255, 255, 255, 0.01);
+  }
+
+  .name-cell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .name-cell strong {
+    color: var(--color-text-primary);
+  }
+
+  .name-cell span {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  .room-type-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .room-type-pill.lecture-hall {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--color-accent-purple);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+  }
+
+  .room-type-pill.ai-ml-lab {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+  }
+
+  .room-type-pill.standard-classroom {
+    background-color: rgba(13, 148, 136, 0.1);
+    color: var(--color-accent-teal);
+    border: 1px solid rgba(13, 148, 136, 0.15);
+  }
+
+  .room-type-pill.seminar-room {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--color-accent-amber);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+  }
+
+  .actions-header {
+    text-align: right;
+  }
+
+  .action-cell {
+    text-align: right;
+  }
+
+  .delete-entity-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-entity-btn:hover {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.08);
+  }
+
+  .empty-list {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 32px !important;
+    font-style: italic;
+  }
+
+  /* Toasts */
+  .toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background-color: var(--color-canvas);
+    border-left: 4px solid var(--color-primary);
+    color: var(--color-text-primary);
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .toast.success {
+    border-left-color: var(--color-accent-teal);
+  }
+
+  .toast.error {
+    border-left-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.02);
+  }
+
+  /* Spinner */
+  .spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid #ffffff;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

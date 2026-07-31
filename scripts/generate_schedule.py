@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from ortools.sat.python import cp_model
@@ -7,9 +8,25 @@ from ortools.sat.python import cp_model
 # Load environment variables from the .env file in the current directory
 load_dotenv()
 
-# Days of the week and Time slots (5 days, 4 slots per day)
-DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-TIME_SLOTS = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4']
+# Load settings from settings.json if it exists
+settings_path = os.path.join(os.path.dirname(__file__), '..', 'settings.json')
+if os.path.exists(settings_path):
+    try:
+        with open(settings_path, 'r') as f:
+            settings = json.load(f)
+        DAYS = settings.get('activeDays', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])
+        total_slots = settings.get('totalSlots', 4)
+        TIME_SLOTS = [f"Slot {i}" for i in range(1, total_slots + 1)]
+        break_slot = settings.get('breakSlot', 'Slot 4')
+    except Exception as e:
+        print(f"Warning: Failed to load settings.json ({e}). Using defaults.")
+        DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        TIME_SLOTS = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4']
+        break_slot = 'Slot 4'
+else:
+    DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    TIME_SLOTS = ['Slot 1', 'Slot 2', 'Slot 3', 'Slot 4']
+    break_slot = 'Slot 4'
 
 def main():
     print("==================================================")
@@ -136,6 +153,9 @@ def main():
 
         for d in range(len(DAYS)):
             for t in range(len(TIME_SLOTS)):
+                slot_name = TIME_SLOTS[t]
+                if slot_name == break_slot:
+                    continue
                 for r_id in valid_rooms:
                     for p_id in qualified_profs:
                         # Create unique boolean variable

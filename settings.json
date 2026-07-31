@@ -1,0 +1,5 @@
+{
+  "activeDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  "totalSlots": 4,
+  "breakSlot": "Slot 4"
+}
