@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Force Tailwind CSS v4 to use class-based dark mode to match our manual theme switcher */
+@custom-variant dark (&:where(.dark, .dark *));

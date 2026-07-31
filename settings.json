@@ -1,5 +1,11 @@
 {
-  "activeDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  "totalSlots": 4,
-  "breakSlot": "Slot 4"
+  "activeDays": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday"
+  ],
+  "totalSlots": 7,
+  "breakSlot": "Slot 5"
 }
