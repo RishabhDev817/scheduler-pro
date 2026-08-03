@@ -1,0 +1,75 @@
+[
+  {
+    "id": "req_1785663116849_1",
+    "professorId": 1,
+    "subjectId": 1,
+    "batchId": 1,
+    "lecturesPerWeek": 3,
+    "eligibleRoomIds": [
+      2
+    ]
+  },
+  {
+    "id": "req_1785663116849_2",
+    "professorId": 3,
+    "subjectId": 3,
+    "batchId": 1,
+    "lecturesPerWeek": 3,
+    "eligibleRoomIds": [
+      3,
+      4
+    ]
+  },
+  {
+    "id": "req_1785663116849_3",
+    "professorId": 1,
+    "subjectId": 1,
+    "batchId": 2,
+    "lecturesPerWeek": 2,
+    "eligibleRoomIds": [
+      2
+    ]
+  },
+  {
+    "id": "req_1785663116849_4",
+    "professorId": 2,
+    "subjectId": 2,
+    "batchId": 2,
+    "lecturesPerWeek": 3,
+    "eligibleRoomIds": [
+      1
+    ]
+  },
+  {
+    "id": "req_1785663116849_5",
+    "professorId": 3,
+    "subjectId": 3,
+    "batchId": 2,
+    "lecturesPerWeek": 2,
+    "eligibleRoomIds": [
+      3,
+      4
+    ]
+  },
+  {
+    "id": "req_1785666563114",
+    "professorId": 2,
+    "subjectId": 2,
+    "batchId": 1,
+    "lecturesPerWeek": 3,
+    "eligibleRoomIds": [
+      1
+    ]
+  },
+  {
+    "id": "req_1785666585831",
+    "professorId": 5,
+    "subjectId": 3,
+    "batchId": 2,
+    "lecturesPerWeek": 2,
+    "eligibleRoomIds": [
+      3,
+      4
+    ]
+  }
+]

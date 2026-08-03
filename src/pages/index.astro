@@ -8,14 +8,14 @@ import Layout from '../layouts/Layout.astro';
     <div class="mesh-glow"></div>
     
     <span class="eyebrow">Academic Platform</span>
-    <h1>The Automated University Scheduling Cloud.</h1>
+    <h1>The automated university scheduling cloud</h1>
     <p class="subtitle">
       Optimized, conflict-free course timetables generated in milliseconds using Constraint Satisfaction Algorithms.
     </p>
     
     <div class="cta-group">
       <a href="/dashboard" class="primary-btn">Enter Dashboard</a>
-      <a href="/about" class="secondary-btn">Learn How It Works</a>
+      <a href="/about" class="secondary-btn">Learn how it works</a>
     </div>
   </div>
 
@@ -24,7 +24,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="icon-wrap color-purple">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
       </div>
-      <h3>Visual Calendar Grid</h3>
+      <h3>Visual calendar grid</h3>
       <p>Analyze classroom allocations, student batch conflicts, and professor schedules day-by-day and slot-by-slot.</p>
     </div>
 
@@ -32,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="icon-wrap color-blue">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
       </div>
-      <h3>CP-SAT Optimizer</h3>
+      <h3>CP-SAT optimizer</h3>
       <p>Google OR-Tools solver prevents double-bookings, honors room capacity limits, and respects faculty specialties.</p>
     </div>
 
@@ -40,7 +40,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="icon-wrap color-teal">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
       </div>
-      <h3>Email Notifications</h3>
+      <h3>Email notifications</h3>
       <p>Automatically group schedule details by faculty member and dispatch formatted teaching timetables via SMTP TLS.</p>
     </div>
   </div>
@@ -107,13 +107,17 @@ import Layout from '../layouts/Layout.astro';
   .primary-btn {
     text-decoration: none;
     background-color: var(--color-text-primary);
-    color: var(--color-bg);
+    color: #ffffff;
     padding: 14px 28px;
     font-size: 15px;
     font-weight: 600;
     border-radius: 30px;
     box-shadow: var(--shadow-sm);
     transition: opacity 0.2s;
+  }
+
+  html.dark .primary-btn {
+    color: #14141c;
   }
 
   .primary-btn:hover {

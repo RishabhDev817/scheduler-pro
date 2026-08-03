@@ -21,7 +21,7 @@ const { title = "University Scheduling System" } = Astro.props;
     <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- Blocking Script to Apply Dark Mode Immediately and Prevent Flash -->
     <script is:inline>
@@ -44,7 +44,7 @@ const { title = "University Scheduling System" } = Astro.props;
   </head>
   <body>
     <!-- Top Nav Header -->
-    <header class="global-header">
+    <header class="global-header glass-panel">
       <div class="header-container">
         <a href="/" class="brand-logo">
           <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +52,7 @@ const { title = "University Scheduling System" } = Astro.props;
             <line x1="3" y1="9" x2="21" y2="9"></line>
             <line x1="9" y1="21" x2="9" y2="9"></line>
           </svg>
-          <span class="logo-text">SchedulerPro.</span>
+          <span class="logo-text">SchedulerPro</span>
         </a>
         
         <nav class="nav-links">
@@ -92,20 +92,20 @@ const { title = "University Scheduling System" } = Astro.props;
     </main>
 
     <!-- Footer Area -->
-    <footer class="global-footer">
+    <footer class="global-footer glass-panel">
       <div class="footer-container">
         <div class="footer-brand">
-          <span class="footer-logo">SchedulerPro.</span>
-          <p class="copyright">© 2026 University Timetable Scheduler. All rights reserved.</p>
+          <span class="footer-logo">SchedulerPro</span>
+          <p class="copyright">© 2026 University timetable scheduler. All rights reserved.</p>
         </div>
         
         <div class="footer-nav">
           <span class="nav-label">Navigation</span>
           <a href="/dashboard" class="footer-link">Dashboard</a>
-          <a href="/about" class="footer-link">About Us</a>
-          <a href="/contact" class="footer-link">Contact Support</a>
-          <a href="/privacy" class="footer-link">Privacy Policy</a>
-          <a href="/terms" class="footer-link">Terms & Conditions</a>
+          <a href="/about" class="footer-link">About us</a>
+          <a href="/contact" class="footer-link">Contact support</a>
+          <a href="/privacy" class="footer-link">Privacy policy</a>
+          <a href="/terms" class="footer-link">Terms & conditions</a>
         </div>
       </div>
     </footer>
@@ -135,46 +135,76 @@ const { title = "University Scheduling System" } = Astro.props;
   /* Define Light Theme & General Settings */
   :root {
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Sora', 'Inter', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     
-    --color-bg: #f4f4f5;
-    --color-canvas: #ffffff;
-    --color-border: #e4e4e7;
-    --color-border-hover: #d4d4d8;
-    --color-text-primary: #18181b;
-    --color-text-secondary: #71717a;
-    --color-text-muted: #a1a1aa;
+    --color-bg: radial-gradient(at top left, #E7E4F6 0%, transparent 60%),
+                radial-gradient(at top right, #E3EDFA 0%, transparent 60%),
+                radial-gradient(at bottom center, #FBE9F1 0%, transparent 65%),
+                #F6F3FA;
+    --color-canvas: rgba(255, 255, 255, 0.6);
+    --color-border: rgba(255, 255, 255, 0.95);
+    --color-border-hover: rgba(255, 255, 255, 0.5);
+    --color-text-primary: #1e293b;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748b;
     
-    --color-primary: #3b82f6;
-    --color-primary-glow: rgba(59, 130, 246, 0.1);
-    --color-accent-purple: #8b5cf6;
-    --color-accent-purple-glow: rgba(139, 92, 246, 0.1);
-    --color-accent-amber: #f59e0b;
-    --color-accent-teal: #0d9488;
+    /* Sage green style primary roles */
+    --color-primary: #6E9B84;
+    --color-primary-dark: #3F5F4F;
+    --color-primary-glow: rgba(110, 155, 132, 0.18);
+    
+    /* Lavender style secondary roles */
+    --color-accent-purple: #8E8CC7;
+    --color-accent-purple-dark: #4B4880;
+    --color-accent-purple-glow: rgba(142, 140, 199, 0.18);
+    
+    /* Amber style tertiary roles */
+    --color-accent-amber: #D6A24C;
+    --color-accent-amber-dark: #7A5A1E;
+    --color-accent-amber-glow: rgba(214, 162, 76, 0.18);
+    
+    --glass: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.95);
+    --glass-blur: 20px;
     
     --header-height: 64px;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --shadow-sm: 0 4px 16px rgba(60, 70, 65, 0.04);
+    --shadow-md: 0 8px 32px rgba(60, 70, 65, 0.08);
+    --shadow-lg: 0 16px 48px rgba(60, 70, 65, 0.12);
   }
 
   /* Define Dark Theme Overrides */
   html.dark {
-    --color-bg: #09090b;
-    --color-canvas: #121214;
-    --color-border: #27272a;
-    --color-border-hover: #3f3f46;
-    --color-text-primary: #f4f4f5;
-    --color-text-secondary: #a1a1aa;
-    --color-text-muted: #52525b;
+    --color-bg: radial-gradient(1100px 650px at 8% -5%, #2A2440, transparent),
+                radial-gradient(1000px 650px at 100% 0%, #1F2A3D, transparent),
+                radial-gradient(1200px 700px at 50% 110%, #331E2B, transparent),
+                #14141C;
+    --color-canvas: rgba(20, 20, 25, 0.6);
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-hover: rgba(255, 255, 255, 0.15);
+    --color-text-primary: #F0F0F2;
+    --color-text-secondary: #B8BCC4;
+    --color-text-muted: #8E939E;
     
-    --color-primary-glow: rgba(59, 130, 246, 0.15);
-    --color-accent-purple: #c084fc;
-    --color-accent-purple-glow: rgba(192, 132, 252, 0.15);
+    /* Sage green style primary roles - Dark Mode Adaptations */
+    --color-primary-dark: #A8D4BC;
+    --color-primary-glow: rgba(110, 155, 132, 0.22);
     
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    /* Lavender style secondary roles - Dark Mode Adaptations */
+    --color-accent-purple-dark: #C5C3ED;
+    --color-accent-purple-glow: rgba(142, 140, 199, 0.22);
+    
+    /* Amber style tertiary roles - Dark Mode Adaptations */
+    --color-accent-amber-dark: #F3D39B;
+    --color-accent-amber-glow: rgba(214, 162, 76, 0.22);
+    
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
   }
 
   /* Reset & Box Model */
@@ -187,12 +217,28 @@ const { title = "University Scheduling System" } = Astro.props;
   html, body {
     width: 100%;
     min-height: 100vh;
-    background: var(--color-bg);
+    background: var(--color-bg) !important;
+    background-attachment: fixed !important;
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     transition: background 0.3s ease, color 0.3s ease;
     display: flex;
     flex-direction: column;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  /* Eye brow / labels style */
+  .eyebrow-accent, .nav-label, .label-eyebrow {
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: #8B948E !important;
+    font-weight: 500 !important;
   }
 
   /* Layout Structure */
@@ -204,22 +250,47 @@ const { title = "University Scheduling System" } = Astro.props;
     padding: 40px 24px;
   }
 
+  /* Glass Panels General Classes */
+  .glass-panel {
+    background: var(--glass) !important;
+    backdrop-filter: blur(var(--glass-blur, 20px)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(60, 70, 65, 0.08) !important;
+  }
+
+  .glass-panel-emphasis {
+    background: rgba(255, 255, 255, 0.78) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(60, 70, 65, 0.08) !important;
+  }
+
+  html.dark .glass-panel {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  html.dark .glass-panel-emphasis {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
+  }
+
   /* Header Styling */
   .global-header {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
     height: var(--header-height);
     position: sticky;
     top: 0;
     z-index: 50;
     width: 100%;
+    border-radius: 0 0 20px 20px !important; /* Rounded bottom for top nav header */
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
     transition: background-color 0.3s ease, border-color 0.3s ease;
-  }
-  html.dark .global-header {
-    background-color: rgba(15, 23, 42, 0.8);
-    border-bottom: 1px solid rgba(30, 41, 59, 0.5);
   }
 
   .header-container {
@@ -278,18 +349,44 @@ const { title = "University Scheduling System" } = Astro.props;
     border: 1px solid var(--color-border);
     color: var(--color-text-secondary);
     padding: 8px;
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    width: 36px;
+    height: 36px;
   }
 
   .theme-toggle-btn:hover {
     color: var(--color-text-primary);
-    background-color: var(--color-bg);
+    background-color: rgba(255, 255, 255, 0.2);
     border-color: var(--color-border-hover);
+  }
+
+  /* Global Focus & Outline resets to override default browser focus styles */
+  button:focus,
+  a:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none !important;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px var(--color-primary-glow) !important;
+  }
+
+  /* Prevent browser default red dashed border on invalid form controls */
+  :invalid {
+    outline: none !important;
+    box-shadow: none !important;
   }
 
   /* Icon visibility based on dark theme */
@@ -312,11 +409,13 @@ const { title = "University Scheduling System" } = Astro.props;
 
   /* Footer Styling */
   .global-footer {
-    background-color: var(--color-canvas);
-    border-top: 1px solid var(--color-border);
     width: 100%;
     padding: 48px 0;
     flex-shrink: 0;
+    border-radius: 20px 20px 0 0 !important; /* Rounded top for footer */
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
     transition: background-color 0.3s ease, border-color 0.3s ease;
   }
 
@@ -356,16 +455,6 @@ const { title = "University Scheduling System" } = Astro.props;
     gap: 12px;
   }
 
-  .nav-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
-    margin-bottom: 4px;
-  }
-
   .footer-link {
     text-decoration: none;
     color: var(--color-text-secondary);
@@ -384,7 +473,7 @@ const { title = "University Scheduling System" } = Astro.props;
     }
     
     .nav-links {
-      display: none; /* Can be enhanced with mobile menu if requested */
+      display: none;
     }
     
     .footer-container {
